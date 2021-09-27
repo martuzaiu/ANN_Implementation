@@ -1,4 +1,5 @@
 import tensorflow as tf
+import logging
 
 def create_model(hidden1, hidden2, hidden3):
     LAYERS = [
@@ -8,5 +9,5 @@ def create_model(hidden1, hidden2, hidden3):
           tf.keras.layers.Dense(hidden3, activation="softmax", name="outputLayer")
     ]
     model_clf = tf.keras.models.Sequential(LAYERS)
-    print(model_clf.summary())
+    model_clf.summary()
     return model_clf

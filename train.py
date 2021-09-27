@@ -1,21 +1,26 @@
 from load_data import load_data
 from model import create_model
 import matplotlib.pyplot as plt
-import seaborn as sns
 import pandas as pd
 import os
-import joblib 
+import joblib
+import logging
+
+logging_str = "[%(asctime)s: %(levelname)s: %(module)s] %(message)s"
+log_dir = "logs"
+os.makedirs(log_dir, exist_ok=True)
+logging.basicConfig(filename= os.path.join(log_dir,"running_logs.log"),level=logging.INFO, format=logging_str, filemode="a")
 
 
 def train_model(model_clf, epochs, X_train, y_train, X_valid, y_valid):
     LOSS_FUNCTION = "sparse_categorical_crossentropy"
-    OPTIMIZER = "SGD"
+    OPTIMIZER = "ADAM"
     METRICS = ["accuracy"]
     VALIDATION = (X_valid, y_valid)
     model_clf.compile(loss=LOSS_FUNCTION, optimizer=OPTIMIZER, metrics=METRICS)
 
-    print("Model training")
-    print("-----"*10)
+    logging.info("Model training")
+    logging.info("-----"*10)
 
     history = model_clf.fit(X_train, y_train, epochs=epochs, validation_data=VALIDATION)
     model_clf.save("models/model.h5")
@@ -27,13 +32,13 @@ def save_plot(history, file_name):
     plt.grid(True)
 
     plot_dir = "plots"
-    os.makedirs(plot_dir, exist_ok=True)  # ONLY CREATE IF MODEL_DIR DOES NOT EXISTS
-    plotPath = os.path.join(plot_dir, file_name)  # model/filename
+    os.makedirs(plot_dir, exist_ok=True)  
+    plotPath = os.path.join(plot_dir, file_name)
     plt.savefig(plotPath)
 
 def test_model(model_clf, X_test, y_test):
-    print("Model testing")
-    print("-----"*10)
+    logging.info("Model testing")
+    logging.info("-----"*10)
     model_clf.evaluate(X_test, y_test)
 
 def main(epochs):
